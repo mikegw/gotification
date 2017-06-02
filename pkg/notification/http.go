@@ -12,7 +12,7 @@ import (
 
 /*--- Public Functions ---*/
 
-func Create(writer http.ResponseWriter, request *http.Request) (int, error) {
+func Create(writer http.ResponseWriter, request *http.Request, persistor Persistor) (int, error) {
     model, err := fetchModel(request)
     if badRequest(err) {
         writeBadRequest(err, writer)
@@ -22,7 +22,7 @@ func Create(writer http.ResponseWriter, request *http.Request) (int, error) {
         return 500, err
     }
 
-    savedModel, err := Save(model)
+    savedModel, err := Save(model, persistor)
     if badRequest(err) {
         writeBadRequest(err, writer)
         return 400, nil

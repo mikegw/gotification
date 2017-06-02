@@ -11,26 +11,27 @@ import (
 type HTTPRequest func(http.ResponseWriter, *http.Request) (int, error)
 
 func (handler HTTPRequest) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-    requestId := rand.Int()
-    logRequest(request, requestId)
+    requestID := rand.Int()
+    logRequest(request, requestID)
     responseCode, err := handler(writer, request)
     if err != nil {
         responseCode = http.StatusInternalServerError
         errorMessage := fmt.Sprintf("{\"message\":\"%s\"}", err.Error())
+        fmt.Printf(errorMessage)
         http.Error(writer, errorMessage, responseCode)
     }
-    logResponseCode(responseCode, requestId)
+    logResponseCode(responseCode, requestID)
 }
 
 
 
 /*--- Private Functions ---*/
 
-func logRequest(req *http.Request, requestId int) {
-    fmt.Printf("[%d] %s %s\n", requestId, req.Method, req.URL.Path)
+func logRequest(req *http.Request, requestID int) {
+    fmt.Printf("[%d] %s %s\n", requestID, req.Method, req.URL.Path)
 }
 
-func logResponseCode(statusCode, requestId int) {
+func logResponseCode(statusCode, requestID int) {
     statusText := http.StatusText(statusCode)
-    fmt.Printf("[%d] %d %s\n", requestId, statusCode, statusText)
+    fmt.Printf("[%d] %d %s\n", requestID, statusCode, statusText)
 }

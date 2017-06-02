@@ -1,5 +1,7 @@
 package notification
 
+// import "github.com/aws/aws-sdk-go/service/sqs"
+
 /*--- Public Data Types ---*/
 
 type Model struct {
@@ -9,16 +11,24 @@ type Model struct {
 
 type SavedModel struct {
     Payload string `json:"payload"`
-    Id string `json:"id"`
+    ID string `json:"id"`
+}
+
+type Persistor interface {
+    Persist(Model) (persistedID string, err error)
 }
 
 
 
 /*--- Public Functions ---*/
 
-func Save(model Model) (SavedModel, error) {
+func Save(model Model, persistor Persistor) (SavedModel, error) {
     var saved SavedModel
+    ID, err := persistor.Persist(model)
+    if err != nil {
+        return saved, err
+    }
     saved.Payload = model.Payload
-    saved.Id = "some id"
+    saved.ID = ID
     return saved, nil
 }
